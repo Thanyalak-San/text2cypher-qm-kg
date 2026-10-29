@@ -1,0 +1,13 @@
+# C7n: as C7 without examples (extra result)
+id: C7n
+description: Domain skill offered, no examples
+schema: prompts/original/mcp_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request
+examples: null
+instructions: null
+skill: skills/concrete-qm-graph
+skill_loading: model             # none | harness | model
+interface: mcp                   # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude, gpt]

@@ -1,0 +1,25 @@
+# Exact versions the harness was built and tested with (Python 3.11.9).
+# Install: python -m pip install -r requirements.txt
+
+# Harness
+anthropic==0.116.0      # must stay below 2.0: 2.x defaults to API version 2026-10-21, which rejects temperature (docs/audit.md)
+openai==2.16.0          # GPT adapter (Responses API)
+httpx==0.28.1
+neo4j==6.1.0
+python-dotenv==1.2.1
+PyYAML==6.0.3
+
+# Analysis (analysis_contrasts.py)
+numpy==2.4.2
+pandas==3.0.0
+scipy==1.17.0
+
+# Figures (analysis/figure_eas.py)
+matplotlib==3.10.7
+
+# Phase 4 question forms (scripts/group_new_questions.py, docs/question_template.xlsx)
+openpyxl==3.1.5
+
+# Not needed to run the harness. Used only by scripts/dump_full_schema.py (kept locally) to regenerate
+# the full schema, and the published Graph RAG run used it: langchain-neo4j==0.8.0
+# MCP server: Node.js (built and tested on v26.12.0) running mcp-server/dist/index.js (npm ci in mcp-server/)

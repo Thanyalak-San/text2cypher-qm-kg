@@ -1,0 +1,78 @@
+Node properties:
+ComplianceStandard {name: STRING, id: STRING}
+ConstituentStorage {name: STRING, id: STRING}
+CustomerOrder {name: STRING, requestedQuantity: INTEGER, product_type: STRING, order_id: STRING, requestedDue_date: DATE}
+DesignedMixProportion {name: STRING, id: STRING}
+ExternalClient {access_level: STRING, name: STRING, role: STRING, organisation: STRING, customer_id: STRING}
+FreshConcreteTest {name: STRING, id: STRING}
+IntermediatedProduct {name: STRING, id: STRING}
+InternalPersonnel {access_level: STRING, name: STRING, role: STRING, shift: STRING}
+MixingWaterInspection {name: STRING, id: STRING}
+MonitoredConcreteConstituent {name: STRING, id: STRING, type: STRING}
+PlannedTask {name: STRING, id: STRING}
+ProductionMachine {name: STRING, id: STRING, batchSize: INTEGER}
+ProductionProject {name: STRING, expectedDue_date: STRING, project_id: STRING, placedOrder_date: STRING}
+QualityInspectionTask {name: STRING, inspection_method: STRING}
+StandardAggregateProperty {name: STRING, id: STRING}
+StandardCementProperty {name: STRING, id: STRING}
+StandardCementType {name: STRING, id: STRING}
+StandardConcreteConstituent {name: STRING, id: STRING}
+StandardCuringEnvironment {name: STRING, id: STRING}
+StandardFreshConcreteProperty {name: STRING, id: STRING}
+StandardHardenedConcreteProperty {name: STRING, id: STRING}
+StandardMixingWaterProperty {name: STRING, id: STRING, pHValue: FLOAT, unit: STRING}
+StandardMixingWaterType {name: STRING, id: STRING, isAllowed: BOOLEAN}
+Relationship properties:
+PLACES_ORDER {placedOrder_date: DATE}
+The relationships:
+(:ComplianceStandard)-[:SPECIFIES]->(:StandardMixingWaterType)
+(:ComplianceStandard)-[:SPECIFIES]->(:MixingWaterInspection)
+(:ComplianceStandard)-[:SPECIFIES]->(:StandardCementType)
+(:ComplianceStandard)-[:SPECIFIES]->(:StandardConcreteConstituent)
+(:DesignedMixProportion)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:DesignedMixProportion)-[:INFLUENCED_BY]->(:StandardAggregateProperty)
+(:DesignedMixProportion)-[:INFLUENCED_BY]->(:StandardMixingWaterProperty)
+(:ExternalClient)-[:PLACES_ORDER]->(:CustomerOrder)
+(:FreshConcreteTest)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:IntermediatedProduct)-[:HAS_PROPERTY]->(:StandardFreshConcreteProperty)
+(:IntermediatedProduct)-[:HAS_PROPERTY]->(:StandardHardenedConcreteProperty)
+(:IntermediatedProduct)-[:USED_IN]->(:PlannedTask)
+(:InternalPersonnel)-[:ASSIGNED_TO]->(:ProductionMachine)
+(:InternalPersonnel)-[:ASSIGNED_TO]->(:QualityInspectionTask)
+(:InternalPersonnel)-[:SUPERVISES]->(:InternalPersonnel)
+(:MixingWaterInspection)-[:INCLUDES]->(:StandardMixingWaterProperty)
+(:MonitoredConcreteConstituent)-[:USED_IN]->(:PlannedTask)
+(:MonitoredConcreteConstituent)-[:STORED_IN]->(:ConstituentStorage)
+(:PlannedTask)-[:PROCESSED_ON]->(:ProductionMachine)
+(:PlannedTask)-[:PRECEDES]->(:PlannedTask)
+(:PlannedTask)-[:PRODUCES]->(:IntermediatedProduct)
+(:ProductionProject)-[:APPROVED_BY]->(:InternalPersonnel)
+(:ProductionProject)-[:PLANNED_FROM]->(:CustomerOrder)
+(:QualityInspectionTask)-[:PERFORMED_AT]->(:PlannedTask)
+(:StandardAggregateProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardAggregateProperty)-[:MEASURED_FROM]->(:StandardAggregateProperty)
+(:StandardCementProperty)-[:INFLUENCED_BY]->(:StandardCementProperty)
+(:StandardCementProperty)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:StandardCementProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardCementType)-[:HAS_PROPERTY]->(:StandardCementProperty)
+(:StandardConcreteConstituent)-[:CLASSIFIED_AS]->(:StandardCementType)
+(:StandardConcreteConstituent)-[:CLASSIFIED_AS]->(:StandardMixingWaterType)
+(:StandardConcreteConstituent)-[:HAS_PROPERTY]->(:StandardAggregateProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardCuringEnvironment)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardCementProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardAggregateProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardMixingWaterProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardFreshConcreteProperty)
+(:StandardFreshConcreteProperty)-[:TESTED_IN]->(:FreshConcreteTest)
+(:StandardFreshConcreteProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardCementProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardAggregateProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardFreshConcreteProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardHardenedConcreteProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardCuringEnvironment)
+(:StandardHardenedConcreteProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardMixingWaterProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardMixingWaterType)-[:REQUIRES]->(:MixingWaterInspection)
+(:StandardMixingWaterType)-[:HAS_PROPERTY]->(:StandardMixingWaterProperty)

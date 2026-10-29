@@ -1,0 +1,62 @@
+# Working with the Neo4j knowledge graph
+
+Use this to explore the knowledge graph held in Neo4j: its entities, the relationships between them, and its overall structure.
+
+## Example Cypher statements
+
+Isolated entities, with neither incoming nor outgoing relationships:
+```cypher
+MATCH (n) WHERE NOT (n)--() RETURN n.name, labels(n)[0] AS type
+```
+
+The best-connected entities, then how relationship counts are spread across entities:
+```cypher
+MATCH (n)-[r]-() RETURN n.name, labels(n)[0] AS type, count(r) AS connections ORDER BY connections DESC LIMIT 10
+
+MATCH (n)
+OPTIONAL MATCH (n)-[r]-()
+WITH n, count(r) AS rel_count
+RETURN rel_count, count(n) AS entities_with_this_count ORDER BY rel_count
+```
+
+Counts: all entities, entities per type, all relationships, relationships per type:
+```cypher
+MATCH (n) RETURN count(n) AS total_entities
+
+MATCH (n) RETURN labels(n)[0] AS type, count(n) AS count ORDER BY count DESC
+
+MATCH ()-[r]->() RETURN count(r) AS total_relationships
+
+MATCH ()-[r]->() RETURN type(r) AS type, count(r) AS count ORDER BY count DESC
+```
+
+Samples: entities with their properties, then relationships with the entities at each end:
+```cypher
+MATCH (n) RETURN n.name, labels(n)[0] AS type, n.description LIMIT 20
+
+MATCH (a)-[r]->(b) RETURN a.name, type(r), b.name LIMIT 20
+```
+
+## From the command line
+
+Call cypher-shell directly in the Docker container:
+```bash
+docker exec -it qq-neo4j-1 cypher-shell -u neo4j -p refinerypass "MATCH (n) RETURN count(n)"
+```
+
+## From Python
+
+```python
+from qq.knowledge.neo4j_client import Neo4jClient
+
+client = Neo4jClient()                                   # create the client
+results = client.execute("MATCH (n) RETURN n LIMIT 10")  # run raw Cypher
+summary = client.get_graph_summary()                     # entity and relationship counts per type
+entity = client.get_entity("entity_name")                # look up one entity by name
+related = client.get_related_entities("entity_name", depth=2, limit=20)  # neighbours up to N hops away
+client.close()                                           # close when finished
+```
+
+## Connecting
+
+Defaults, each overridable by an environment variable: URI `bolt://localhost:7687` (`NEO4J_URI`), user `neo4j` (`NEO4J_USER`), password `refinerypass` (`NEO4J_PASSWORD`).

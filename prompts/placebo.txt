@@ -1,0 +1,60 @@
+# Neo4j Installation and Operations Notes
+
+General notes on installing, configuring and maintaining a Neo4j server.
+
+## Editions and licensing
+
+Neo4j is distributed in two main editions. The Community Edition is open source and suits development, teaching and smaller deployments. The Enterprise Edition is a commercial product that adds features such as clustering, online backup and finer-grained security, and normally requires a licence agreement for production use. Neo4j Desktop bundles a local Enterprise installation for development on a single machine. Check the licence terms that apply to you before moving a project into production.
+
+## Installing
+
+Neo4j runs on the Java Virtual Machine, so a supported Java runtime must be available; each Neo4j release lists the Java version it expects. Common ways to install it are:
+
+- **Neo4j Desktop**: a graphical application for creating and managing local databases.
+- **Package managers**: for example `apt` on Debian-based Linux systems.
+- **Docker**: an official image that runs the server in a container.
+
+To start the server in a container:
+
+```bash
+docker run --name neo4j-server -p 7474:7474 -p 7687:7687 neo4j:latest
+```
+
+After installation, open the browser interface and change the default password on first login.
+
+## Configuration
+
+Server settings are kept in a configuration file in the `conf` folder of the installation. Changes take effect after a restart. Settings that are often adjusted include:
+
+- the amount of memory given to the Java heap;
+- the size of the page cache, which holds data files in memory;
+- the network addresses and ports the server listens on;
+- the folders used for data, logs, plugins and import files.
+
+As a rough guide, leave enough memory for the operating system and size the page cache so that the most frequently used data fits in memory.
+
+## Plugins
+
+Additional functionality can be installed as plugins by placing the plugin file in the `plugins` folder and restarting the server. Neo4j Desktop can install the most common plugins from its interface. A plugin must be built for the same version as the server.
+
+## Backups
+
+Back up databases regularly and test that the backups can be restored. With the database stopped, a full copy can be taken with the administration tool:
+
+```bash
+neo4j-admin database dump neo4j --to-path=/backups
+```
+
+The copy can later be loaded into an empty installation with the matching `load` command. The Enterprise Edition also supports backups while the database is running.
+
+## Logs and monitoring
+
+The server writes its main log and a debug log to the `logs` folder. Check these files first when the server fails to start or behaves unexpectedly. Disk space, memory use and response times are worth monitoring on any long-running installation.
+
+## Upgrading
+
+Read the release notes before upgrading, take a backup, and upgrade a test copy first. Upgrades between major versions may require a migration step and can change default settings.
+
+## Security
+
+Use strong passwords, give each user only the permissions they need, enable encrypted connections for any server reachable from a network, and keep the software up to date with security fixes.

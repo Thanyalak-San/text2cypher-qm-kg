@@ -1,0 +1,48 @@
+## Actual Graph Schema (from Neo4j)
+
+### Node Labels
+- ComplianceStandard: id, name
+- ConstituentStorage: id, name
+- CustomerOrder: name, order_id, product_type, requestedDue_date, requestedQuantity
+- DesignedMixProportion: id, name
+- ExternalClient: access_level, customer_id, name, organisation, role
+- FreshConcreteTest: id, name
+- IntermediatedProduct: id, name
+- InternalPersonnel: access_level, name, role, shift
+- MixingWaterInspection: id, name
+- MonitoredConcreteConstituent: id, name, type
+- PlannedTask: id, name
+- ProductionMachine: batchSize, id, name
+- ProductionProject: expectedDue_date, name, placedOrder_date, project_id
+- QualityInspectionTask: inspection_method, name
+- StandardAggregateProperty: id, name
+- StandardCementProperty: id, name
+- StandardCementType: id, name
+- StandardConcreteConstituent: id, name
+- StandardCuringEnvironment: id, name
+- StandardFreshConcreteProperty: id, name
+- StandardHardenedConcreteProperty: id, name
+- StandardMixingWaterProperty: id, name, pHValue, unit
+- StandardMixingWaterType: id, isAllowed, name
+
+### Relationship Types
+- APPROVED_BY
+- ASSIGNED_TO
+- CLASSIFIED_AS
+- COMPLIES_WITH
+- HAS_PROPERTY
+- INCLUDES
+- INFLUENCED_BY
+- MEASURED_FROM
+- PERFORMED_AT
+- PLACES_ORDER
+- PLANNED_FROM
+- PRECEDES
+- PROCESSED_ON
+- PRODUCES
+- REQUIRES
+- SPECIFIES
+- STORED_IN
+- SUPERVISES
+- TESTED_IN
+- USED_IN

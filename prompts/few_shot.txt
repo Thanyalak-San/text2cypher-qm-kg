@@ -1,0 +1,70 @@
+// Which standards define the requirements for concrete constituents?
+MATCH (a:StandardConcreteConstituent)<-[:SPECIFIES]-(c:ComplianceStandard)
+RETURN collect(DISTINCT c.name) AS relevantStandard
+
+// According relevant standards, what constituents are required for concrete production?
+MATCH (con:StandardConcreteConstituent)
+RETURN con.name
+
+// Which cement properties are influenced by the water-cement ratio?
+MATCH (cp:StandardCementProperty)-[:INFLUENCED_BY]->(m:DesignedMixProportion)
+WHERE m.name = 'Water-cement ratio'
+RETURN collect(DISTINCT cp.name) AS CementProperties
+
+// Which mixing water properties influence the setting time of fresh concrete?
+MATCH (fc:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(mwp:StandardMixingWaterProperty)
+WHERE fc.name = 'Setting time'
+RETURN collect(DISTINCT mwp.name) AS MixingWaterProperties
+
+// Which inspections must be carried out before sea water can be used as mixing water?
+MATCH (wt:StandardMixingWaterType)-[:REQUIRES]->(insp:MixingWaterInspection)
+WHERE wt.name = 'Sea water'
+RETURN collect(DISTINCT insp.name) AS RequiredInspections
+
+// According to relevant standards, what pH value requirements are specified for the mixing water property 'Acids'?
+MATCH (mwp:StandardMixingWaterProperty)
+WHERE mwp.name = 'Acids' AND mwp.pHValue IS NOT NULL
+RETURN collect(DISTINCT mwp.pHValue) AS pHValue
+
+// Which mix design parameters have an influence on the compressive strength of hardened concrete?
+MATCH (hcp:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(dmp:DesignedMixProportion)
+WHERE hcp.name = 'Compressive strength'
+RETURN dmp.name
+
+// Which mixing water properties are checked in each mixing water inspection?
+MATCH (insp:MixingWaterInspection)-[:INCLUDES]->(p:StandardMixingWaterProperty)
+RETURN insp.name AS Inspection, collect(DISTINCT p.name) AS Properties
+
+// Where is each monitored concrete constituent stored?
+MATCH (c:MonitoredConcreteConstituent)-[:STORED_IN]->(s:ConstituentStorage)
+RETURN c.name AS Constituent, c.type AS Type, s.name AS Storage
+
+// Which intermediate product does each production stage produce?
+MATCH (t:PlannedTask)-[:PRODUCES]->(ip:IntermediatedProduct)
+RETURN t.name AS Stage, ip.name AS Product
+
+// Which aggregate properties are used to measure the durability of aggregates?
+MATCH (d:StandardAggregateProperty)-[:MEASURED_FROM]->(p:StandardAggregateProperty)
+WHERE d.name = 'Durability'
+RETURN collect(DISTINCT p.name) AS MeasuredFrom
+
+// According to relevant standards, which cement types can cement be classified as?
+MATCH (c:StandardConcreteConstituent)-[:CLASSIFIED_AS]->(ct:StandardCementType)
+WHERE c.name = 'Cement'
+RETURN collect(DISTINCT ct.name) AS CementTypes
+
+// Who supervises whom in the production team?
+MATCH (s:InternalPersonnel)-[:SUPERVISES]->(p:InternalPersonnel)
+RETURN s.name AS Supervisor, p.name AS Supervised
+
+// Which standards define the acceptable measurement criteria for compressive strength in hardened concrete?
+MATCH (p:StandardHardenedConcreteProperty {name: 'Compressive strength'})-[:COMPLIES_WITH]->(s:ComplianceStandard)
+RETURN s.name
+
+// What methods are implemented to measure the quality of fresh concrete?
+MATCH (fcp:StandardFreshConcreteProperty)-[:TESTED_IN]->(tm:FreshConcreteTest)
+RETURN DISTINCT tm.name
+
+// Which standards define the test method for the slump test in fresh concrete?
+MATCH (tm:FreshConcreteTest {name: 'Slump test'})-[:COMPLIES_WITH]->(s:ComplianceStandard)
+RETURN s.name

@@ -1,0 +1,13 @@
+# C0: Schema-blind
+id: C0
+description: Schema-blind
+schema: null
+schema_delivery: fixed           # fixed | on_request
+examples: null
+instructions: null
+skill: null
+skill_loading: none              # none | harness | model
+interface: driver                # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude]

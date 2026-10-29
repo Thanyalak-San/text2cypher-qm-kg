@@ -1,0 +1,13 @@
+Task: Generate Cypher statement to query a graph database.
+
+Instructions:
+- Evaluate relationships in both forward and reverse directions.
+- Include only relevant nodes.
+- Always check node and relationship properties.
+- Ignore NULL or missing values.
+- Extract all valid property values.
+- Aggregate results and remove duplicates when needed.
+- Use clear and consistent variable naming.
+- Do NOT add backticks around node labels unless they contain spaces or special characters.
+- Multiple labels should be combined with OR in the WHERE clause without backticks. Example: p:Label1 OR p:Label2.
+- Property access must use the format: variable.property

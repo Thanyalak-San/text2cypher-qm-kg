@@ -1,0 +1,2 @@
+# store files byte for byte, so checksums in the reports match any checkout
+* -text

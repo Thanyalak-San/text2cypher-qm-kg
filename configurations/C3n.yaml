@@ -1,0 +1,13 @@
+# C3n: as C3 without examples (extra result)
+id: C3n
+description: Neo4j-MCP, no examples
+schema: prompts/original/mcp_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request (Phase 1: the original MCP script put the schema in the prompt, so C3a = C3)
+examples: null
+instructions: null
+skill: null
+skill_loading: none              # none | harness | model
+interface: mcp                   # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude, gpt]

@@ -1,0 +1,13 @@
+# C4w: Reworded skill text
+id: C4w
+description: Reworded skill text
+schema: prompts/original/mcp_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request
+examples: prompts/few_shot.txt
+instructions: prompts/skill_body_reworded.txt
+skill: null
+skill_loading: none              # none | harness | model
+interface: mcp                   # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude]

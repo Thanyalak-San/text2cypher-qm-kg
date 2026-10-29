@@ -1,0 +1,13 @@
+# C4p: Placebo
+id: C4p
+description: Placebo
+schema: prompts/original/mcp_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request
+examples: prompts/few_shot.txt
+instructions: prompts/placebo.txt
+skill: null
+skill_loading: none              # none | harness | model
+interface: mcp                   # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude]

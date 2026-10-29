@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+db_backups/
+# third-party generic skill used by C5/C6: obtain it from its source
+skills/neo4j-query/
+mcp-server/node_modules/

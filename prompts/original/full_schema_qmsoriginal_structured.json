@@ -1,0 +1,563 @@
+{
+  "node_props": {
+    "ComplianceStandard": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "ConstituentStorage": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "CustomerOrder": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "requestedQuantity",
+        "type": "INTEGER"
+      },
+      {
+        "property": "product_type",
+        "type": "STRING"
+      },
+      {
+        "property": "order_id",
+        "type": "STRING"
+      },
+      {
+        "property": "requestedDue_date",
+        "type": "DATE"
+      }
+    ],
+    "DesignedMixProportion": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "ExternalClient": [
+      {
+        "property": "access_level",
+        "type": "STRING"
+      },
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "role",
+        "type": "STRING"
+      },
+      {
+        "property": "organisation",
+        "type": "STRING"
+      },
+      {
+        "property": "customer_id",
+        "type": "STRING"
+      }
+    ],
+    "FreshConcreteTest": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "IntermediatedProduct": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "InternalPersonnel": [
+      {
+        "property": "access_level",
+        "type": "STRING"
+      },
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "role",
+        "type": "STRING"
+      },
+      {
+        "property": "shift",
+        "type": "STRING"
+      }
+    ],
+    "MixingWaterInspection": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "MonitoredConcreteConstituent": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      },
+      {
+        "property": "type",
+        "type": "STRING"
+      }
+    ],
+    "PlannedTask": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "ProductionMachine": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      },
+      {
+        "property": "batchSize",
+        "type": "INTEGER"
+      }
+    ],
+    "ProductionProject": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "expectedDue_date",
+        "type": "STRING"
+      },
+      {
+        "property": "project_id",
+        "type": "STRING"
+      },
+      {
+        "property": "placedOrder_date",
+        "type": "STRING"
+      }
+    ],
+    "QualityInspectionTask": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "inspection_method",
+        "type": "STRING"
+      }
+    ],
+    "StandardAggregateProperty": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardCementProperty": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardCementType": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardConcreteConstituent": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardCuringEnvironment": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardFreshConcreteProperty": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardHardenedConcreteProperty": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      }
+    ],
+    "StandardMixingWaterProperty": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      },
+      {
+        "property": "pHValue",
+        "type": "FLOAT"
+      },
+      {
+        "property": "unit",
+        "type": "STRING"
+      }
+    ],
+    "StandardMixingWaterType": [
+      {
+        "property": "name",
+        "type": "STRING"
+      },
+      {
+        "property": "id",
+        "type": "STRING"
+      },
+      {
+        "property": "isAllowed",
+        "type": "BOOLEAN"
+      }
+    ]
+  },
+  "rel_props": {
+    "PLACES_ORDER": [
+      {
+        "property": "placedOrder_date",
+        "type": "DATE"
+      }
+    ]
+  },
+  "relationships": [
+    {
+      "end": "StandardMixingWaterType",
+      "start": "ComplianceStandard",
+      "type": "SPECIFIES"
+    },
+    {
+      "end": "MixingWaterInspection",
+      "start": "ComplianceStandard",
+      "type": "SPECIFIES"
+    },
+    {
+      "end": "StandardCementType",
+      "start": "ComplianceStandard",
+      "type": "SPECIFIES"
+    },
+    {
+      "end": "StandardConcreteConstituent",
+      "start": "ComplianceStandard",
+      "type": "SPECIFIES"
+    },
+    {
+      "end": "DesignedMixProportion",
+      "start": "DesignedMixProportion",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardAggregateProperty",
+      "start": "DesignedMixProportion",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardMixingWaterProperty",
+      "start": "DesignedMixProportion",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "CustomerOrder",
+      "start": "ExternalClient",
+      "type": "PLACES_ORDER"
+    },
+    {
+      "end": "ComplianceStandard",
+      "start": "FreshConcreteTest",
+      "type": "COMPLIES_WITH"
+    },
+    {
+      "end": "StandardFreshConcreteProperty",
+      "start": "IntermediatedProduct",
+      "type": "HAS_PROPERTY"
+    },
+    {
+      "end": "StandardHardenedConcreteProperty",
+      "start": "IntermediatedProduct",
+      "type": "HAS_PROPERTY"
+    },
+    {
+      "end": "PlannedTask",
+      "start": "IntermediatedProduct",
+      "type": "USED_IN"
+    },
+    {
+      "end": "ProductionMachine",
+      "start": "InternalPersonnel",
+      "type": "ASSIGNED_TO"
+    },
+    {
+      "end": "QualityInspectionTask",
+      "start": "InternalPersonnel",
+      "type": "ASSIGNED_TO"
+    },
+    {
+      "end": "InternalPersonnel",
+      "start": "InternalPersonnel",
+      "type": "SUPERVISES"
+    },
+    {
+      "end": "StandardMixingWaterProperty",
+      "start": "MixingWaterInspection",
+      "type": "INCLUDES"
+    },
+    {
+      "end": "PlannedTask",
+      "start": "MonitoredConcreteConstituent",
+      "type": "USED_IN"
+    },
+    {
+      "end": "ConstituentStorage",
+      "start": "MonitoredConcreteConstituent",
+      "type": "STORED_IN"
+    },
+    {
+      "end": "ProductionMachine",
+      "start": "PlannedTask",
+      "type": "PROCESSED_ON"
+    },
+    {
+      "end": "PlannedTask",
+      "start": "PlannedTask",
+      "type": "PRECEDES"
+    },
+    {
+      "end": "IntermediatedProduct",
+      "start": "PlannedTask",
+      "type": "PRODUCES"
+    },
+    {
+      "end": "InternalPersonnel",
+      "start": "ProductionProject",
+      "type": "APPROVED_BY"
+    },
+    {
+      "end": "CustomerOrder",
+      "start": "ProductionProject",
+      "type": "PLANNED_FROM"
+    },
+    {
+      "end": "PlannedTask",
+      "start": "QualityInspectionTask",
+      "type": "PERFORMED_AT"
+    },
+    {
+      "end": "ComplianceStandard",
+      "start": "StandardAggregateProperty",
+      "type": "COMPLIES_WITH"
+    },
+    {
+      "end": "StandardAggregateProperty",
+      "start": "StandardAggregateProperty",
+      "type": "MEASURED_FROM"
+    },
+    {
+      "end": "StandardCementProperty",
+      "start": "StandardCementProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "DesignedMixProportion",
+      "start": "StandardCementProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "ComplianceStandard",
+      "start": "StandardCementProperty",
+      "type": "COMPLIES_WITH"
+    },
+    {
+      "end": "StandardCementProperty",
+      "start": "StandardCementType",
+      "type": "HAS_PROPERTY"
+    },
+    {
+      "end": "StandardCementType",
+      "start": "StandardConcreteConstituent",
+      "type": "CLASSIFIED_AS"
+    },
+    {
+      "end": "StandardMixingWaterType",
+      "start": "StandardConcreteConstituent",
+      "type": "CLASSIFIED_AS"
+    },
+    {
+      "end": "StandardAggregateProperty",
+      "start": "StandardConcreteConstituent",
+      "type": "HAS_PROPERTY"
+    },
+    {
+      "end": "DesignedMixProportion",
+      "start": "StandardFreshConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardCuringEnvironment",
+      "start": "StandardFreshConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardCementProperty",
+      "start": "StandardFreshConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardAggregateProperty",
+      "start": "StandardFreshConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardMixingWaterProperty",
+      "start": "StandardFreshConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardFreshConcreteProperty",
+      "start": "StandardFreshConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "FreshConcreteTest",
+      "start": "StandardFreshConcreteProperty",
+      "type": "TESTED_IN"
+    },
+    {
+      "end": "ComplianceStandard",
+      "start": "StandardFreshConcreteProperty",
+      "type": "COMPLIES_WITH"
+    },
+    {
+      "end": "DesignedMixProportion",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardCementProperty",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardAggregateProperty",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardFreshConcreteProperty",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardHardenedConcreteProperty",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "StandardCuringEnvironment",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "INFLUENCED_BY"
+    },
+    {
+      "end": "ComplianceStandard",
+      "start": "StandardHardenedConcreteProperty",
+      "type": "COMPLIES_WITH"
+    },
+    {
+      "end": "ComplianceStandard",
+      "start": "StandardMixingWaterProperty",
+      "type": "COMPLIES_WITH"
+    },
+    {
+      "end": "MixingWaterInspection",
+      "start": "StandardMixingWaterType",
+      "type": "REQUIRES"
+    },
+    {
+      "end": "StandardMixingWaterProperty",
+      "start": "StandardMixingWaterType",
+      "type": "HAS_PROPERTY"
+    }
+  ],
+  "metadata": {
+    "constraint": [],
+    "index": []
+  }
+}

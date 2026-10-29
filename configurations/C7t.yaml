@@ -1,0 +1,13 @@
+# C7t: Domain text as instructions
+id: C7t
+description: Domain text as instructions
+schema: prompts/original/mcp_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request
+examples: prompts/few_shot.txt
+instructions: prompts/domain_text.txt
+skill: null
+skill_loading: none              # none | harness | model
+interface: mcp                   # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude, gpt]

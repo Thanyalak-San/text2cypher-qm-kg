@@ -1,0 +1,16 @@
+# Model settings shared by all configurations
+claude:
+  id: claude-sonnet-4-6
+  max_tokens: 1024          # as in the original MCP and skill scripts (the Graph RAG script used the
+                            # langchain-anthropic default, 64000). Kept for the main run (decided
+                            # 2026-10-22): in the pilot no reply was cut off; the longest was 600 tokens.
+  temperature: 0            # as in the original scripts
+  caching: off
+  disable_parallel_tool_use: true   # only sent when the request has tools
+gpt:
+  id: gpt-5.4-2026-03-05    # chosen 2026-10-22: price closest to Sonnet 4.6 ($2.50/$15 vs $3/$15 per 1M tokens),
+                            # same generation (March 2026), reasoning can be switched off; pinned snapshot
+  max_tokens: 1024          # sent as max_output_tokens (Responses API)
+  temperature: 0            # use the model default if it does not accept 0; record which
+  reasoning_effort: none    # no hidden reasoning, as Claude runs without extended thinking
+  parallel_tool_calls: false

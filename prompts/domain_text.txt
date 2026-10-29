@@ -1,0 +1,439 @@
+# Querying the concrete production quality management graph
+
+The graph holds what the applicable standards specify for concrete production, the plant's mix design and
+production plan, its quality inspections and tests, and the people, customers and orders involved. Follow these steps to answer a question with one correct Cypher query.
+
+## Workflow
+
+1. **Identify the QM stage and what the question asks for.** Decide which stage the question belongs to, then which entities it involves, which conditions it sets and what it should return.
+
+   | QM stage | Typical subject | Where to look in `schema_reference.md` |
+   |---|---|---|
+   | Quality planning | requirements, mix design, production plan, people and orders | Standards and requirements; Mix design and testing; Production plan and resources; People, customers and orders |
+   | Quality control | inspections and tests of materials and concrete | Mix design and testing; Production plan and resources |
+   | Quality assurance | compliance with standards and test methods | Standards and requirements; Mix design and testing |
+   | Quality improvement | which properties or parameters influence others | Standards and requirements; Mix design and testing |
+
+2. **Read the schema files.**
+   - Read `schema_reference.md` for the node labels, their properties and property types, and `relationship_directions.md` for every relationship and the only direction in which it exists.
+   - Use only labels, relationship types and properties listed there.
+   - If the question needs counting, grouping, more than one hop, ranking or dates, also read `patterns.md` and start from the pattern for the closest type of question.
+
+3. **Write the query.**
+   - Copy each relationship's direction from `relationship_directions.md`. A relationship written the other way round matches nothing.
+   - Give a label to every node you filter or return, and write labels and names with their exact spelling and case.
+   - Check property types in `schema_reference.md` before comparing values (for example, dates stored as strings).
+   - Return exactly what the question asks for, using `DISTINCT` where the same value could appear more than once.
+
+4. **Check it with `validate.py`.** Run `validate.py` on the query. It checks labels, relationship types and directions against the graph and asks Neo4j to check the query without running it. Fix every problem it reports and run it again until it prints `OK`.
+
+5. **Submit the query.** Submit the checked query once, in the way the task asks.
+
+=== File: schema_reference.md ===
+
+# Schema reference: concrete production quality management graph
+
+Every node label in the graph, what it represents, and its properties.
+Relationships and their directions are in `relationship_directions.md`.
+
+Naming conventions:
+- Labels starting with **`Standard`** describe what the applicable standards specify (requirements, types, properties). They are reference knowledge, not records from the plant.
+- Labels starting with **`Planned`** or **`Production`** describe the plant's own production plan and resources.
+- Labels starting with **`Monitored`** describe resources (e.g. constituents) actually being processed or transformed during production.
+  *Example: 4 kg of cement is planned to be used (`Planned` labels), but 4.5 kg is actually used (`Monitored` labels).*
+- Label names are case-sensitive and must be written exactly as below, including `IntermediatedProduct`.
+- Every node has a `name` (STRING). Most also have an `id` (STRING), an internal identifier with no meaning for queries.
+
+## Standards and requirements
+
+| Label | What it represents | Properties |
+|---|---|---|
+| `ComplianceStandard` | A published standard that specifies requirements or test methods | `name`, `id` |
+| `StandardConcreteConstituent` | A constituent of concrete as defined by the standards (the material in general, not a delivered lot) | `name`, `id` |
+| `StandardCementType` | A type of cement defined by the standards | `name`, `id` |
+| `StandardCementProperty` | A property of cement that the standards specify | `name`, `id` |
+| `StandardAggregateProperty` | A property of aggregate that the standards specify | `name`, `id` |
+| `StandardMixingWaterType` | A type or source of mixing water defined by the standards | `name`, `id`, `isAllowed` (BOOLEAN: whether the standards permit this water for concrete) |
+| `StandardMixingWaterProperty` | A property of mixing water that the standards specify | `name`, `id`, `pHValue` (FLOAT: specified pH limit, where one applies), `unit` (STRING: unit of the specified limit) |
+| `StandardFreshConcreteProperty` | A property of fresh (unhardened) concrete | `name`, `id` |
+| `StandardHardenedConcreteProperty` | A property of hardened concrete | `name`, `id` |
+| `StandardCuringEnvironment` | An environmental condition during curing | `name`, `id` |
+
+## Mix design and testing
+
+| Label | What it represents | Properties |
+|---|---|---|
+| `DesignedMixProportion` | A mix design parameter used when proportioning the concrete mix | `name`, `id` |
+| `FreshConcreteTest` | A test method applied to fresh concrete | `name`, `id` |
+| `MixingWaterInspection` | A group of checks carried out on mixing water before use | `name`, `id` |
+
+## Production plan and resources
+
+| Label | What it represents | Properties |
+|---|---|---|
+| `PlannedTask` | A stage of the planned production process | `name`, `id` |
+| `ProductionMachine` | A machine used in production | `name`, `id`, `batchSize` (INTEGER: planned batch size handled by the machine) |
+| `IntermediatedProduct` | A product produced by a production stage (an intermediate state of the concrete or block) | `name`, `id` |
+| `MonitoredConcreteConstituent` | A constituent material actually being processed during production | `name`, `id`, `type` (STRING: subtype, where one applies; may be null) |
+| `ConstituentStorage` | A storage location for constituent materials | `name`, `id` |
+| `QualityInspectionTask` | A planned quality inspection | `name`, `inspection_method` (STRING: how the inspection is carried out) |
+
+## People, customers and orders
+
+| Label | What it represents | Properties |
+|---|---|---|
+| `InternalPersonnel` | A member of the plant's own staff | `name`, `role` (STRING: job role), `shift` (STRING: working shift, where assigned), `access_level` (STRING) |
+| `ExternalClient` | A person or organisation outside the plant, such as a customer | `name`, `role` (STRING), `organisation` (STRING), `customer_id` (STRING: only for customers), `access_level` (STRING) |
+| `CustomerOrder` | An order placed by a customer | `name`, `order_id` (STRING), `product_type` (STRING), `requestedQuantity` (INTEGER), `requestedDue_date` (DATE) |
+| `ProductionProject` | A production project planned to fulfil an order | `name`, `project_id` (STRING), `placedOrder_date` (STRING), `expectedDue_date` (STRING) |
+
+## Property types to watch
+
+- `CustomerOrder.requestedDue_date` and the `PLACES_ORDER` relationship's `placedOrder_date` are **DATE** values.
+- `ProductionProject.placedOrder_date` and `ProductionProject.expectedDue_date` are **STRING** values in `YYYY-MM-DD` form, not dates. Convert them with `date(...)` before comparing them with DATE values.
+- `StandardMixingWaterType.isAllowed` is a BOOLEAN: compare it with `true` or `false`, not with strings.
+- `ProductionMachine.batchSize` and `CustomerOrder.requestedQuantity` are INTEGER values.
+
+=== File: relationship_directions.md ===
+
+# Relationship directions: concrete production quality management graph
+
+Every relationship in the graph, written as `(:Start)-[:TYPE]->(:End)`.
+Each pattern below is the only direction in which that relationship exists; a pattern written the other way round matches nothing.
+Node labels and their properties are in `schema_reference.md`.
+
+How to read a pattern:
+- `(a)-[:TYPE]->(b)` and `(b)<-[:TYPE]-(a)` are the same pattern; the arrow, not the order in which the nodes are written, gives the direction.
+- The same relationship type can connect several pairs of labels. Use the labels on both ends to pick the right one.
+
+20 relationship types, 51 patterns.
+
+## APPROVED_BY
+
+Read as: the project is approved by the person.
+
+```
+(:ProductionProject)-[:APPROVED_BY]->(:InternalPersonnel)
+```
+
+## ASSIGNED_TO
+
+Read as: the person is assigned to the machine or inspection task.
+
+```
+(:InternalPersonnel)-[:ASSIGNED_TO]->(:ProductionMachine)
+(:InternalPersonnel)-[:ASSIGNED_TO]->(:QualityInspectionTask)
+```
+
+## CLASSIFIED_AS
+
+Read as: the constituent can be classified as the type.
+
+```
+(:StandardConcreteConstituent)-[:CLASSIFIED_AS]->(:StandardCementType)
+(:StandardConcreteConstituent)-[:CLASSIFIED_AS]->(:StandardMixingWaterType)
+```
+
+## COMPLIES_WITH
+
+Read as: the item must comply with the standard; the standard is always at the end.
+
+```
+(:FreshConcreteTest)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardAggregateProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardCementProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardFreshConcreteProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardHardenedConcreteProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+(:StandardMixingWaterProperty)-[:COMPLIES_WITH]->(:ComplianceStandard)
+```
+
+## HAS_PROPERTY
+
+Read as: the item has the property; the item is at the start, the property at the end.
+
+```
+(:IntermediatedProduct)-[:HAS_PROPERTY]->(:StandardFreshConcreteProperty)
+(:IntermediatedProduct)-[:HAS_PROPERTY]->(:StandardHardenedConcreteProperty)
+(:StandardCementType)-[:HAS_PROPERTY]->(:StandardCementProperty)
+(:StandardConcreteConstituent)-[:HAS_PROPERTY]->(:StandardAggregateProperty)
+(:StandardMixingWaterType)-[:HAS_PROPERTY]->(:StandardMixingWaterProperty)
+```
+
+## INCLUDES
+
+Read as: the inspection includes a check of the property.
+
+```
+(:MixingWaterInspection)-[:INCLUDES]->(:StandardMixingWaterProperty)
+```
+
+## INFLUENCED_BY
+
+Read as: the start is influenced by the end: the affected item points to what influences it.
+
+```
+(:DesignedMixProportion)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:DesignedMixProportion)-[:INFLUENCED_BY]->(:StandardAggregateProperty)
+(:DesignedMixProportion)-[:INFLUENCED_BY]->(:StandardMixingWaterProperty)
+(:StandardCementProperty)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:StandardCementProperty)-[:INFLUENCED_BY]->(:StandardCementProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardAggregateProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardCementProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardCuringEnvironment)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardFreshConcreteProperty)
+(:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(:StandardMixingWaterProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:DesignedMixProportion)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardAggregateProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardCementProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardCuringEnvironment)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardFreshConcreteProperty)
+(:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(:StandardHardenedConcreteProperty)
+```
+
+## MEASURED_FROM
+
+Read as: the start property is measured from the end property.
+
+```
+(:StandardAggregateProperty)-[:MEASURED_FROM]->(:StandardAggregateProperty)
+```
+
+## PERFORMED_AT
+
+Read as: the inspection task is performed at the production stage.
+
+```
+(:QualityInspectionTask)-[:PERFORMED_AT]->(:PlannedTask)
+```
+
+## PLACES_ORDER
+
+Read as: the client places the order.
+Relationship properties: `placedOrder_date` (DATE).
+
+```
+(:ExternalClient)-[:PLACES_ORDER]->(:CustomerOrder)
+```
+
+## PLANNED_FROM
+
+Read as: the project is planned from the order.
+
+```
+(:ProductionProject)-[:PLANNED_FROM]->(:CustomerOrder)
+```
+
+## PRECEDES
+
+Read as: the start stage comes before the end stage (earlier to later).
+
+```
+(:PlannedTask)-[:PRECEDES]->(:PlannedTask)
+```
+
+## PROCESSED_ON
+
+Read as: the production stage is processed on the machine.
+
+```
+(:PlannedTask)-[:PROCESSED_ON]->(:ProductionMachine)
+```
+
+## PRODUCES
+
+Read as: the production stage produces the product.
+
+```
+(:PlannedTask)-[:PRODUCES]->(:IntermediatedProduct)
+```
+
+## REQUIRES
+
+Read as: the water type requires the inspection.
+
+```
+(:StandardMixingWaterType)-[:REQUIRES]->(:MixingWaterInspection)
+```
+
+## SPECIFIES
+
+Read as: the standard specifies the item; the standard is always at the start.
+
+```
+(:ComplianceStandard)-[:SPECIFIES]->(:MixingWaterInspection)
+(:ComplianceStandard)-[:SPECIFIES]->(:StandardCementType)
+(:ComplianceStandard)-[:SPECIFIES]->(:StandardConcreteConstituent)
+(:ComplianceStandard)-[:SPECIFIES]->(:StandardMixingWaterType)
+```
+
+## STORED_IN
+
+Read as: the constituent is stored in the storage location.
+
+```
+(:MonitoredConcreteConstituent)-[:STORED_IN]->(:ConstituentStorage)
+```
+
+## SUPERVISES
+
+Read as: the start person supervises the end person.
+
+```
+(:InternalPersonnel)-[:SUPERVISES]->(:InternalPersonnel)
+```
+
+## TESTED_IN
+
+Read as: the property is tested in the test method.
+
+```
+(:StandardFreshConcreteProperty)-[:TESTED_IN]->(:FreshConcreteTest)
+```
+
+## USED_IN
+
+Read as: the material or product is used in the production stage.
+
+```
+(:IntermediatedProduct)-[:USED_IN]->(:PlannedTask)
+(:MonitoredConcreteConstituent)-[:USED_IN]->(:PlannedTask)
+```
+
+=== File: patterns.md ===
+
+# Query patterns by type of question
+
+Worked queries for each type of question, classified by **query complexity** (how much Cypher structure the
+answer needs) and **reasoning depth** (how many inferential steps it needs). Find the type closest to the
+question, then adapt the pattern using the labels in `schema_reference.md` and the directions in
+`relationship_directions.md`.
+
+| Complexity | Meaning |
+|---|---|
+| Low | one MATCH pattern with minimal filtering |
+| Medium | several MATCH patterns, aggregation, or multi-hop traversal |
+| High | compound conditions across several contexts, including temporal logic |
+
+| Reasoning depth | Meaning |
+|---|---|
+| Low | retrieve one node–relationship–node triple |
+| Medium | several steps with conditions and filters |
+| High | sequential conditioning, aggregation, comparison and selection |
+
+Each pattern was written for a quality assurance (A), quality control (C) or quality improvement (I) question;
+the source question is noted. Most source questions ask about plant records the graph does not hold, so they
+were adapted into a question the graph can answer. Where no source question fits a type, the pattern was
+written as a question of that QM stage.
+
+---
+
+## 1. Low complexity, low depth: one triple
+
+Source: C19 "Which mixer was used to produce each batch of fresh concrete?", adapted.
+Question: In which production stage is each intermediate product used?
+
+```cypher
+MATCH (ip:IntermediatedProduct)-[:USED_IN]->(t:PlannedTask)
+RETURN ip.name AS Product, t.name AS Stage
+```
+
+Technique: a single pattern; return one row per pair.
+
+## 2. Low complexity, medium depth: one pattern with a condition
+
+Source: no matching A, C or I question; written as a quality improvement question to represent this type.
+Question: Which aggregate properties influence the consistency of fresh concrete?
+
+```cypher
+MATCH (f:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(a:StandardAggregateProperty)
+WHERE f.name = 'Consistency'
+RETURN collect(DISTINCT a.name) AS AggregateProperties
+```
+
+Technique: filter one end of the pattern by name; the affected property is at the start of `INFLUENCED_BY`.
+
+## 3. Medium complexity, low depth: aggregation per group
+
+Source: no matching A, C or I question; written as a quality assurance question to represent this type.
+Question: How many cement properties influence each hardened concrete property, and which are they?
+
+```cypher
+MATCH (h:StandardHardenedConcreteProperty)-[:INFLUENCED_BY]->(c:StandardCementProperty)
+RETURN h.name AS HardenedProperty,
+       count(DISTINCT c) AS NumberOfCementProperties,
+       collect(DISTINCT c.name) AS CementProperties
+ORDER BY NumberOfCementProperties DESC, HardenedProperty
+```
+
+Technique: group by the node you return; `count(DISTINCT …)` and `collect(DISTINCT …)` avoid double counting.
+
+## 4. Medium complexity, medium depth: multi-hop with a condition
+
+Source: I4 "Which quality issues were traced back to mix design parameters?", adapted.
+Question: Which aggregate properties influence the water absorption of fresh concrete, and which mix design
+parameters do those aggregate properties in turn influence?
+
+```cypher
+MATCH (f:StandardFreshConcreteProperty {name: 'Water absorption'})-[:INFLUENCED_BY]->(a:StandardAggregateProperty)
+OPTIONAL MATCH (m:DesignedMixProportion)-[:INFLUENCED_BY]->(a)
+RETURN a.name AS AggregateProperty, collect(DISTINCT m.name) AS InfluencedMixParameters
+```
+
+Technique: reuse the variable `a` to chain two patterns; `OPTIONAL MATCH` keeps aggregate properties that
+influence no mix parameter. Note that the same name can belong to nodes with different labels, so always
+give the label.
+
+## 5. Medium complexity, high depth: aggregation, comparison and selection
+
+Source: no matching A, C or I question; written as a quality improvement question to represent this type.
+Question: Which aggregate properties influence the largest number of fresh concrete properties?
+
+```cypher
+MATCH (f:StandardFreshConcreteProperty)-[:INFLUENCED_BY]->(a:StandardAggregateProperty)
+WITH a, count(DISTINCT f) AS freshCount
+WITH max(freshCount) AS top, collect({property: a.name, freshCount: freshCount}) AS counts
+UNWIND counts AS c
+WITH top, c
+WHERE c.freshCount = top
+RETURN collect(c.property) AS AggregateProperties, top AS NumberOfFreshProperties
+```
+
+Technique: count per item, find the maximum, then keep every item with that maximum. This returns all
+items in a tie, which `ORDER BY … LIMIT 1` would not.
+
+## 6. High complexity, medium depth: temporal condition
+
+Source: C2 "Which batches experienced deviations in mixing time?", loosely adapted as a quality control question to represent this type.
+Question: Which projects are expected to take more than 180 days from the order being placed to the
+expected due date?
+
+```cypher
+MATCH (p:ProductionProject)
+WHERE p.placedOrder_date IS NOT NULL AND p.expectedDue_date IS NOT NULL
+  AND duration.inDays(date(p.placedOrder_date), date(p.expectedDue_date)).days > 180
+RETURN p.name AS Project,
+       duration.inDays(date(p.placedOrder_date), date(p.expectedDue_date)).days AS DaysToDue
+```
+
+Technique: the project dates are stored as strings, so convert them with `date(...)` first;
+`duration.inDays(...).days` gives the difference in days. Check for missing values before converting.
+
+## 7. High complexity, high depth: compound conditions, aggregation and selection
+
+Source: I6 "Which measurement results supported the identified root causes?", adapted.
+Question: Among the fresh concrete properties that are covered by a compliance standard, which one is
+influenced by the most aggregate properties, and which standard covers it?
+
+```cypher
+MATCH (f:StandardFreshConcreteProperty)-[:COMPLIES_WITH]->(s:ComplianceStandard)
+MATCH (f)-[:INFLUENCED_BY]->(a:StandardAggregateProperty)
+WITH f, collect(DISTINCT s.name) AS Standards, count(DISTINCT a) AS n
+ORDER BY n DESC
+LIMIT 1
+RETURN f.name AS FreshProperty, Standards, n AS NumberOfAggregateProperties
+```
+
+Technique: two MATCH clauses on the same variable act as a compound condition (the property must satisfy
+both); aggregate, then order and select. Use the tie-safe form from pattern 5 if several items could share
+the top count.

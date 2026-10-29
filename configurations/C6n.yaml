@@ -1,0 +1,13 @@
+# C6n: as C6 without examples (extra result)
+id: C6n
+description: Skill offered, no examples
+schema: prompts/original/mcp_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request
+examples: null
+instructions: null
+skill: skills/neo4j-query        # generic skill: clean local copy (SKILL.md only), not in git
+skill_loading: model             # none | harness | model
+interface: mcp                   # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude, gpt]

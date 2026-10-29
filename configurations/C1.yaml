@@ -1,0 +1,13 @@
+# C1: Graph RAG
+id: C1
+description: Graph RAG
+schema: prompts/original/full_schema_qmsoriginal.txt
+schema_delivery: fixed           # fixed | on_request
+examples: prompts/few_shot.txt
+instructions: null
+skill: null
+skill_loading: none              # none | harness | model
+interface: driver                # driver | mcp
+max_requests: 8
+max_calls: 11
+models: [claude, gpt]
